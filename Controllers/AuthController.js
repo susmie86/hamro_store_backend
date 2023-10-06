@@ -1,4 +1,4 @@
-const users = require("../models/users.js");
+const userModel = require("../models/users.js");
 const otpService = require(`../services/otp.js`);
 const hashPassword = require(`../services/hash_password.js`);
 const token = require(`../middleware/jwt_handler.js`);
@@ -7,77 +7,80 @@ const jwtHandler = require('../middleware/jwt_handler');
 
 
 module.exports.signUpUser = async (req, res) => {
-    try {// Taking User's data
-        const firstName = req.body.firstName;
-        const lastName = req.body.lastName;
-        const userEmail = req.body.email;
-        const userPassword = req.body.password;
+    // try {
+    // Taking User's data
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName;
+    const userEmail = req.body.email;
+    const userPassword = req.body.password;
+    let errors = [];
 
-        let errors = [];
+    // CHecking if user entered any null data
+    if (firstName == undefined || firstName == "") {
+        errors.push('Please provide a first name.');
+    }
 
-        // CHecking if user entered any null data
-        if (firstName == undefined || firstName == "") {
-            errors.push('Please provide a first name.');
+    if (lastName == undefined || lastName == "") {
+        errors.push('Please provide a last name.');
+    }
+
+    if (userEmail == undefined || userEmail == "") {
+        errors.push('Please provide an email.');
+    } else {
+        const isEmailValid = checkEmailValidity(userEmail);
+        if (!isEmailValid) {
+            errors.push('Please provide a valid email.');
+        }
+    }
+
+    if (userPassword == undefined || userPassword == "") {
+        errors.push('Please enter a password.')
+    }
+
+    if (errors.length > 0) {
+        throw { code: 'VALIDATION_ERROR', message: errors };
+    } else {
+
+        // Checking If Provided email already exist in DB 
+        const emailData = await userModel.findOne({ email: userEmail });
+        if (emailData != null) {
+            throw { code: "VALIDATION_ERROR", message: "This user already exists" };
         }
 
-        if (lastName == undefined || lastName == "") {
-            errors.push('Please provide a last name.');
+        console.log(emailData);
+
+        const hashedPassword = await hashPassword.hashPasswordGenerator(userPassword);
+        const generatedOTP = otpService.otpGenerator();
+
+        // Storing All data into database
+        const userData = await userModel.create({
+            firstName: firstName,
+            lastName: lastName,
+            email: userEmail,
+            password: hashedPassword,
+            otp: generatedOTP
+        });
+
+        console.log("Running");
+        // Send otp to email
+        const sendOtp = emailService.sendOtpMail(userData.email, userData.otp);
+        console.log(sendOtp);
+
+        const newData = {
+            _id: userData._id,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email,
+            isVerified: userData.isVerified
         }
 
-        if (userEmail == undefined || userEmail == "") {
-            errors.push('Please provide an email.');
-        } else {
-            const isEmailValid = checkEmailValidity(userEmail);
-            if (!isEmailValid) {
-                errors.push('Please provide a valid email.');
-            }
-        }
+        console.log("Running new data");
 
-        if (userPassword == undefined || userPassword == "") {
-            errors.push('Please enter a password.')
-        }
-
-        if (errors.length > 0) {
-            throw errors;
-        } else {
-
-            // Checking If Provided email already exist in DB 
-            const emailData = await userModel.findOne({ email: userEmail });
-            if (emailData != null) {
-                throw ('This Email already exist.');
-            }
-
-            const hashedPassword = await hashPassword.hashPasswordGenerator(userPassword);
-            const generatedOTP = otpService.otpGenerator();
-
-            // Storing All data into database
-            const userData = await userModel.create({
-                firstName: firstName,
-                lastName: lastName,
-                email: userEmail,
-                password: hashedPassword,
-                otp: generatedOTP
-            });
-
-            // Send otp to email
-            const sendOtp = emailService.sendOtpMail(userData.email, userData.otp);
-            // console.log(sendOtp);
-            const newData = {
-                _id: userData._id,
-                firstName: userData.firstName,
-                lastName: userData.lastName,
-                email: userData.email,
-                isVerified: userData.isVerified
-            }
-
-            res.json({
-                "status": "Success",
-                "message": "Registration Complete",
-                "data": newData
-            });
-        }
-    } catch (err) {
-        console.error("Error in signUpUser:", error);
+        res.json({
+            "status": "Success",
+            "message": "Registration Complete",
+            "data": newData
+        });
     }
 }
 
@@ -156,7 +159,7 @@ module.exports.signIn = async (req, res) => {
     }
 
     if (errors.length > 0) {
-        throw errors;
+        throw { code: "VALIDATION_ERROR", message: errors };
     } else {
 
         const emailData = await userModel.findOne({ email: email });

@@ -26,7 +26,9 @@ const connectionString = process.env.CONNECTION_STRING;
 // Connecting to mongoose database
 main().catch(err => console.log(err));
 async function main() {
-    await mongoose.connect(connectionString);
+    await mongoose.connect(connectionString, {
+        dbName: "hamro_store_db"
+    });
     console.log("Database is connected successfully.");
 }
 
