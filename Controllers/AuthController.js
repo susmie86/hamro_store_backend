@@ -5,7 +5,7 @@ const token = require(`../middleware/jwt_handler.js`);
 const emailService = require(`../services/mail_service.js`);
 const jwtHandler = require('../middleware/jwt_handler');
 
-
+//====>>>> Sign Up <<<<====//
 module.exports.signUpUser = async (req, res) => {
     // try {
     // Taking User's data
@@ -84,7 +84,7 @@ module.exports.signUpUser = async (req, res) => {
     }
 }
 
-
+//====>>>> Verify User <<<<====//
 module.exports.verifyEmail = async (req, res) => {
 
     // Taking User's Email and OTP
@@ -191,7 +191,67 @@ module.exports.signIn = async (req, res) => {
     }
 }
 
-// Checking Email validity
+//====>>>> Get all users <<<<====//
+module.exports.getAllUsers = async (req, res) => {
+    const users = await userModel.find();
+    res.json({
+        "status": "Success",
+        "message": "Got all users",
+        "data": users
+    });
+}
+
+//====>>>> Get a user <<<<====//
+module.exports.getUser = async (req, res) => {
+    const { id } = req.params;
+    const user = await userModel.findById(id);
+    if (!user) {
+        throw "User doesn't exists.";
+    } else {
+        res.json({
+            "status": "Success",
+            "message": "Got a user successfully",
+            "data": user
+        });
+    }
+}
+
+//====>>>> Delete a user <<<<====//
+module.exports.deleteUser = async (req, res) => {
+    const { id } = req.params;
+    const deletedUser = await userModel.findByIdAndDelete(id);
+    if (!deletedUser) {
+        throw "User doesn't exists.";
+    } else {
+        res.json({
+            "status": "Success",
+            "message": "Deleted user Successfully.",
+            "data": deletedUser
+        });
+    }
+}
+
+//====>>>> Update a user <<<<====//
+module.exports.updateUser = async (req, res) => {
+    const { id } = req.params;
+    const updatedUser = await userModel.findByIdAndUpdate(id, {
+        firstName: req?.body?.firstName,
+        lastName: req?.body?.lastName,
+        email: req?.body?.email
+    });
+
+    if (!updatedUser) {
+        throw "User doesn't exists.";
+    } else {
+        res.json({
+            "status": "Success",
+            "message": "Updated user Successfully.",
+            "data": updatedUser
+        });
+    }
+}
+
+//====>>>> Check Email Validity <<<<====//
 const checkEmailValidity = (email) => {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
