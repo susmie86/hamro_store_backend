@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
@@ -35,6 +36,16 @@ const userSchema = new mongoose.Schema({
         default: false
     },
 
-})
+    carts: {
+        type: Array,
+        default: []
+    },
+
+    address: [{ type: ObjectId, ref: "Address" }],
+
+    wishlist: [{ type: ObjectId, ref: "Product" }]
+}, {
+    timestamps: true
+});
 
 module.exports = mongoose.model('users', userSchema);
