@@ -179,6 +179,16 @@ module.exports.signIn = async (req, res) => {
       } else {
         const accessToken = token.createNewAccessToken(emailData.email);
         const refreshToken = token.createNewRefreshToken(emailData.email);
+
+        const updatedUser = await userModel.findByIdAndUpdate(emailData._id, {
+          refreshToken: refreshToken,
+        });
+
+        // This might be removed in future
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          maxAge: 3 * 24 * 60 * 60 * 1000,
+        });
         res.json({
           status: "Success",
           message: "Log in successfull.",
@@ -256,7 +266,7 @@ module.exports.updateUser = async (req, res) => {
   }
 };
 
-//====>>>> Generate a token <<<<====//
+//====>>>> Generate a token using refresh token <<<<====//
 module.exports.accessTokenGenerator = async (req, res) => {
   const userEmail = req.body.email;
   const newAccessToken = await token.createNewAccessToken(userEmail);
@@ -268,6 +278,37 @@ module.exports.accessTokenGenerator = async (req, res) => {
       accessToken: newAccessToken,
     },
   });
+};
+
+//====>>>> Handle log out <<<<====//
+module.exports.logoutHandler = async (req, res) => {
+  const { refreshToken } = req.cookies;
+  if (!req.cookies?.refreshToken) {
+    throw "No refresh token in cookies.";
+  }
+  const foundUser = await userModel.findOne({ refreshToken });
+
+  if (!foundUser) {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+    });
+    res.sendStatus(204);
+  }
+
+  await userModel.findOneAndUpdate(
+    { refreshToken },
+    {
+      refreshToken: "",
+    }
+  );
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: true,
+  });
+
+  res.sendStatus(204);
 };
 
 //====>>>> Check Email Validity <<<<====//

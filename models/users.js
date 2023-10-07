@@ -1,50 +1,55 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-
+const userSchema = new mongoose.Schema(
+  {
     firstName: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     lastName: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     email: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     password: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     created_date: {
-        type: String,
-        default: new Date().toISOString()
+      type: String,
+      default: new Date().toISOString(),
     },
     otp: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     roles: {
-        type: String,
-        default: "user"
+      type: String,
+      default: "user",
     },
     isVerified: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
 
     carts: {
-        type: Array,
-        default: []
+      type: Array,
+      default: [],
     },
 
     address: [{ type: mongoose.Schema.Types.ObjectId, ref: "Address" }],
 
-    wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }]
-}, {
-    timestamps: true
-});
+    wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    refreshToken: {
+      type: String,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-module.exports = mongoose.model('users', userSchema);
+module.exports = mongoose.model("users", userSchema);

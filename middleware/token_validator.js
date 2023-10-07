@@ -27,17 +27,22 @@ module.exports.accessTokenValidator = async (req, res, next) => {
 //====>>>> Validates the access token and return user email as request body <<<<====//
 module.exports.refreshTokenValidator = async (req, res, next) => {
   // Get refresh token from authorization header.
-  const bearerToken = req.headers["authorization"];
-  if (
-    bearerToken == undefined ||
-    bearerToken == "" ||
-    bearerToken.trim() == ""
-  ) {
-    throw "Refresh token is required.";
+
+  const { refreshToken } = req.cookies;
+
+  if (!req.cookies?.refreshToken) {
+    throw "No refresh token in cookies.";
   }
-  const refreshToken = bearerToken.split(" ")[1];
+
+  const foundUser = await userModel.findOne({ refreshToken });
+
+  if (!foundUser) throw "User not found with given Refresh Token.";
+
+  jwtHandler.validateRefreshToken(refreshToken);
 
   const userEmail = await jwtHandler.validateRefreshToken(refreshToken);
+
+  if(foundUser.email !== userEmail) throw "Refresh token not matched."
   req.body.email = userEmail;
   next();
 };
