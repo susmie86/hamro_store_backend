@@ -17,12 +17,13 @@ router.delete("/delete/:id", errorHandler(Controller.deleteUser));
 router.put("/update/:id", errorHandler(Controller.updateUser));
 
 //====>>>> Only For Admin route <<<<====//
-router// Generates a new access token.
-.router
-  .post(
-    "/generateToken",
-    errorHandler(tokenValidator.refreshTokenValidator),
-    errorHandler(Controller.accessTokenGenerator)
-  );
+
+
+// Generates a new access token.
+router.post(
+  "/generateToken",
+  errorHandler(tokenValidator.refreshTokenValidator),
+  errorHandler(Controller.accessTokenGenerator)
+);
 
 module.exports = router;

@@ -4,6 +4,7 @@ const hashPassword = require(`../services/hash_password.js`);
 const token = require(`../services/jwt_handler.js`);
 const emailService = require(`../services/mail_service.js`);
 const jwtHandler = require("../services/jwt_handler.js");
+const { validateMongooseId } = require("../services/validate_mogoose_id.js");
 
 //====>>>> Sign Up <<<<====//
 module.exports.signUpUser = async (req, res) => {
@@ -203,9 +204,8 @@ module.exports.getAllUsers = async (req, res) => {
 
 //====>>>> Get a user <<<<====//
 module.exports.getUser = async (req, res) => {
-  const { email } = req.body;
-  const user = await userModel.findOne({ email });
-  console.log(user);
+  const { user } = req.body;
+
   if (!user) {
     throw "User doesn't exists.";
   } else {
@@ -220,6 +220,7 @@ module.exports.getUser = async (req, res) => {
 //====>>>> Delete a user <<<<====//
 module.exports.deleteUser = async (req, res) => {
   const { id } = req.params;
+  validateMongooseId(id);
   const deletedUser = await userModel.findByIdAndDelete(id);
   if (!deletedUser) {
     throw "User doesn't exists.";
@@ -235,6 +236,9 @@ module.exports.deleteUser = async (req, res) => {
 //====>>>> Update a user <<<<====//
 module.exports.updateUser = async (req, res) => {
   const { id } = req.params;
+
+  validateMongooseId(id);
+
   const updatedUser = await userModel.findByIdAndUpdate(id, {
     firstName: req?.body?.firstName,
     lastName: req?.body?.lastName,
