@@ -1,12 +1,52 @@
-const { Product } = require("../models/Products")
+const productModel = require("../models/Products");
+const slugify = require("slugify");
 
-exports.createProduct = async (req, res) => {
-    const product = new Product(req.body);
-    try{
-        const result = await product.save();
-        res.status(201).json(result)
-    } catch(err) {
-        res.status(400).json(err)
-    }
-}
+//====>>>> Create A product <<<<====//
+module.exports.createProduct = async (req, res) => {
+  if (req.body.productName) {
+    req.body.slug = slugify(req.body.productName);
+  }
+  const createdProduct = await productModel.create(req.body);
+  if (!createdProduct) {
+    throw "unable to create product";
+  }
+  res.json({
+    status: "Success",
+    message: "product created successfully",
+    data: createdProduct,
+  });
+};
 
+
+//====>>>> update a product <<<<====//
+
+//====>>>> get a product based on id <<<<====//
+module.exports.getProduct = async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    throw "Id not found.";
+  }
+  const foundProduct = await productModel.findById(id);
+
+  res.json({
+    status: "Success",
+    message: "product fetched successfully",
+    data: foundProduct,
+  });
+};
+
+//====>>>> get all product <<<<====//
+module.exports.getAllProducts = async (req, res) => {
+  const foundProducts = await productModel.find();
+
+  if (!foundProducts) {
+    throw "There is no product in database.";
+  }
+
+  res.json({
+    status: "Success",
+    message: "products fetched successfully",
+    data: foundProducts,
+  });
+};

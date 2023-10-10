@@ -1,7 +1,10 @@
 const express = require("express");
-const { createProduct } = require("../Controllers/ProductController");
-const router = express.Router(); 
+const router = express.Router();
+const Controller = require("../Controllers/ProductController");
+const errorHandler = require("../middleware/error_handler");
 
-router.post("/products", createProduct);
+router.post("/createProduct", errorHandler(Controller.createProduct));
+router.get("/", errorHandler(Controller.getAllProducts));
+router.get("/:id", errorHandler(Controller.getProduct));
 
-exports.router = router;
+module.exports = router;

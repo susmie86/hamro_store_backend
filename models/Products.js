@@ -1,30 +1,60 @@
-const mongoose = require("mongoose");
-const { Schema } = mongoose;
+const mongoose = require("mongoose"); // Erase if already required
 
-const productSchema = new Schema({
-    title: { type: String, required: true, unique: true },
-    description: { type: String, required: true },
-    price: { type: Number, min: [1, 'wrong min price'], max: [10000, 'wrong max price'] },
-    discountPercentage: { type: Number, min: [1, 'wrong min discount'], max: [99, 'wrong max discount'] },
-    rating: { type: Number, min: [0, 'wrong min rating'], max: [5, 'wrong max price'], default: 0 },
-    stock: { type: Number, min: [0, 'wrong min stock'], default: 0 },
-    brand: { type: String, required: true },
-    category: { type: String, required: true },
-    thumbnail: { type: String, required: true },
-    images: { type: [String], required: true },
-    colors: { type: [Schema.Types.Mixed] },
-    sizes: { type: [Schema.Types.Mixed] },
-    highlights: { type: [String] },
-    discountPrice: { type: Number },
-    deleted: { type: Boolean, default: false },
-});
+// Declare the Schema of the Mongo model
+var productSchema = new mongoose.Schema(
+  {
+    productName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      lowerCase: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    category: {
+      type: String,
+      required: true
+      // type: mongoose.Schema.Types.ObjectId,
+      // ref: "Category",
+    },
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    images: {
+      type: Array,
+    },
+    color: {
+      type: String,
+      required: true
+      // enum: ["Black", "Brown", "Red"],
+    },
+    rating: [
+      {
+        star: Number,
+        postedBy: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+      },
+    ],
+    sold: {
+      type: Number,
+      default: 0,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-// Creating virtual data field
-const virtual = productSchema.virtual('id');
-virtual.get(() => { return this._id });
-productSchema.set("toJSON", {
-    virtuals: true,
-    versionKey: false,
-    transform: (doc, ret) => { delete ret._id }
-})
-exports.Product = mongoose.model("Product", productSchema);
+//Export the model
+module.exports = mongoose.model("Product", productSchema);
