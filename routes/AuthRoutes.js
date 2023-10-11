@@ -6,6 +6,7 @@ const tokenValidator = require("../middleware/token_validator.js");
 
 router.post("/signup", errorHandler(Controller.signUpUser));
 router.post("/verify", errorHandler(Controller.verifyEmail));
+router.post("/resendOtp", errorHandler(Controller.resendOtpCode));
 router.post("/signin", errorHandler(Controller.signIn));
 router.get("/getAllUsers", errorHandler(Controller.getAllUsers));
 router.get(
@@ -26,7 +27,6 @@ router.get(
 );
 router.get("/logout", errorHandler(Controller.logoutHandler));
 module.exports = router;
-
 
 //================================>>>>>>>> Finished Auth Api for now <<<<<<<<<<<<<<<<===========================================//
 //================================>>>>>>>> Finished Auth Api for now <<<<<<<<<<<<<<<<===========================================//

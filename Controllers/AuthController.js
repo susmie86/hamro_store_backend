@@ -43,8 +43,18 @@ module.exports.signUpUser = async (req, res) => {
   } else {
     // Checking If Provided email already exist in DB
     const emailData = await userModel.findOne({ email: userEmail });
-    if (emailData != null) {
-      throw { code: "VALIDATION_ERROR", message: "This user already exists" };
+    if (emailData !== null) {
+      if (emailData.isVerified) {
+        throw {
+          code: "VALIDATION_ERROR",
+          message: "This user is already registered and verified.",
+        };
+      } else {
+        throw {
+          code: "VALIDATION_ERROR",
+          message: "This user is aready registered.",
+        };
+      }
     }
 
     console.log(emailData);
@@ -92,48 +102,32 @@ module.exports.verifyEmail = async (req, res) => {
   const email = req.body.email;
   const OTP = req.body.otp;
 
-  let errors = [];
-
-  // Checking if any null data is present or not
-  if (email == undefined || email == "") {
-    errors.push("Please Provide your email.");
-  } else {
-    const isEmailValid = checkEmailValidity(email);
-    if (!isEmailValid) {
-      errors.push("Please provide a valid email.");
-    }
+  if (OTP === undefined || OTP === "") {
+    throw "Please Enter your OTP.";
   }
+  // Check if Email matched with Database
+  const emailData = await userModel.findOne({ email: email });
 
-  if (OTP == undefined || OTP == "") {
-    errors.push("Please Enter your OTP.");
+  if (emailData === null) {
+    throw "Your Email is not Registered.";
   }
-  if (errors.length > 0) {
-    throw errors;
+  if (emailData.isVerified == true) {
+    throw "Your email is already verified.";
   } else {
-    // Check if Email matched with Database
-    const emailData = await userModel.findOne({ email: email });
-
-    if (emailData == null) {
-      throw "Your Email is not Registered.";
-    }
-    if (emailData.isVerified == true) {
-      throw "Your email is already verified.";
+    // Checking if provided OTP match with OTP in DB
+    if (OTP != emailData.otp) {
+      throw "your otp is not match.";
     } else {
-      // Checking if provided OTP match with OTP in DB
-      if (OTP != emailData.otp) {
-        throw "your otp is not match.";
-      } else {
-        await userModel.findByIdAndUpdate(emailData._id, {
-          isVerified: true,
-        });
-      }
-
-      res.json({
-        status: "Success",
-        message: "Verification Complete.",
-        data: null,
+      await userModel.findByIdAndUpdate(emailData._id, {
+        isVerified: true,
       });
     }
+
+    res.json({
+      status: "Success",
+      message: "Verification Complete.",
+      data: null,
+    });
   }
 };
 
@@ -264,6 +258,22 @@ module.exports.updateUser = async (req, res) => {
       data: updatedUser,
     });
   }
+};
+
+//====>>>> Resend OTP code <<<<====//
+module.exports.resendOtpCode = async (req, res) => {
+  const email = req.body.email;
+
+  const otp = otpService.otpGenerator();
+  const updatedUser = await userModel.findOneAndUpdate(email, {
+    otp: otp,
+  });
+
+  if (!updatedUser) {
+    throw "No user with this email";
+  }
+
+  response.json(updatedUser);
 };
 
 //====>>>> Generate a token using refresh token <<<<====//

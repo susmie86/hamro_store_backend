@@ -6,15 +6,21 @@ const productRouter = require("./routes/products");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
+const cors = require("cors");
 
 const app = express();
 
 // Using middlewares
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  })
+);
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(morgan("dev"))
+app.use(morgan("dev"));
 
 // Custom Middleware
 app.use("/api/product", productRouter);
