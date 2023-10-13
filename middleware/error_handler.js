@@ -19,3 +19,5 @@ module.exports = (func) => {
     });
   };
 };
+
+//============> Mongooseee error handler <============//

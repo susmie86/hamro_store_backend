@@ -4,7 +4,7 @@ const Controller = require("../Controllers/ProductController");
 const errorHandler = require("../middleware/error_handler");
 
 router.post("/createProduct", errorHandler(Controller.createProduct));
-router.get("/", errorHandler(Controller.getAllProducts));
+router.get("/", errorHandler(Controller.getProductsByPage));
 router.get("/:id", errorHandler(Controller.getProduct));
 
 module.exports = router;

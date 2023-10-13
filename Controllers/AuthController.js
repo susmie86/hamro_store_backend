@@ -183,6 +183,11 @@ module.exports.signIn = async (req, res) => {
           httpOnly: true,
           maxAge: 3 * 24 * 60 * 60 * 1000,
         });
+        res.cookie("accessToken", accessToken, {
+          httpOnly: true,
+          maxAge: 1 * 24 * 60 * 60 * 1000,
+        });
+        
         res.json({
           status: "Success",
           message: "Log in successfull.",

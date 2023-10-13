@@ -17,7 +17,6 @@ module.exports.createProduct = async (req, res) => {
   });
 };
 
-
 //====>>>> update a product <<<<====//
 
 //====>>>> get a product based on id <<<<====//
@@ -37,16 +36,36 @@ module.exports.getProduct = async (req, res) => {
 };
 
 //====>>>> get all product <<<<====//
-module.exports.getAllProducts = async (req, res) => {
-  const foundProducts = await productModel.find();
+// module.exports.getAllProducts = async (req, res) => {
+//   const foundProducts = await productModel.find();
 
-  if (!foundProducts) {
+//   if (!foundProducts) {
+//     throw "There is no product in database.";
+//   }
+
+//   res.json({
+//     status: "Success",
+//     message: "products fetched successfully",
+//     data: foundProducts,
+//   });
+// };
+
+//============> Get Page wise products <============//
+module.exports.getProductsByPage = async (req, res) => {
+  const page = parseInt(req.params.page) || 1;
+  const limit = parseInt(req.params.limit) || 12;
+
+  const skip = (page - 1) * limit;
+
+  const products = await productModel.find().skip(skip).limit(limit);
+
+  if (!products) {
     throw "There is no product in database.";
   }
 
   res.json({
     status: "Success",
     message: "products fetched successfully",
-    data: foundProducts,
+    data: products,
   });
 };
