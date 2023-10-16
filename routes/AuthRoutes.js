@@ -12,6 +12,7 @@ router.get("/getAllUsers", errorHandler(Controller.getAllUsers));
 router.get(
   "/getUser",
   errorHandler(tokenValidator.accessTokenValidator),
+  errorHandler(tokenValidator.adminValidator),
   errorHandler(Controller.getUser)
 );
 router.delete("/delete/:id", errorHandler(Controller.deleteUser));
