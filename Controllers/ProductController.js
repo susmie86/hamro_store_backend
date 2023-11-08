@@ -3,48 +3,60 @@ const { validateMongooseId } = require("../services/validate_mogoose_id");
 
 //====>>>> create the product <<<<====//
 module.exports.createProduct = async (req, res) => {
-  const { productName, description, color, discountPercentage, category } =
-    req.body;
-
-  const thumbnail = `http://localhost:5000/${req.files[0].path}`;
-
-  const images = req.files.map((file) => {
-    return `http://localhost:5000/${file.path}`;
-  });
-  if (!thumbnail) throw "thumbnail is required.";
-
-  console.log(req.files);
-  if (
-    !productName ||
-    !description ||
-    !color ||
-    !discountPercentage
-    // !rating
-  ) {
-    throw "All fields are required.";
-  }
-
-  const productRepeated = await productModel.findOne({ productName });
-
-  if (productRepeated) {
-    throw "Product already exists in database";
-  }
-
-  const newProduct = await productModel.create({
+  const {
     productName,
     description,
     color,
     discountPercentage,
     category,
-    thumbnail,
-    images,
-  });
+    stockQuantity,
+  } = req.body;
 
-  res.json({
-    status: "Success",
-    message: "Product created successfully",
-    data: newProduct,
+  const rating = req.body?.rating;
+  const reviews = req.body?.reviews;
+  let errors = [];
+
+  console.log("files", req.files);
+
+  const thumbnail = `http://localhost:5000/${req.files[0]?.path}`;
+
+  const images = req.files?.map((file) => {
+    return `http://localhost:5000/${file.path}`;
   });
+  if (!stockQuantity) errors.push("Stock quantity is required.");
+  if (images.length === 0) errors.push("Please insert atleast 1 image");
+  if (!productName) errors.push("productName is required.");
+  if (!description) errors.push("description is required.");
+  if (!category) errors.push("category is required.");
+
+  if (errors.length > 0) {
+    throw { code: "VALIDATION_ERROR", message: errors };
+  } else {
+    const productRepeated = await productModel.findOne({ productName });
+
+    if (productRepeated) {
+      throw "Product already exists in database";
+    }
+
+    const newProduct = await productModel.create({
+      productName,
+      description,
+      color,
+      discountPercentage,
+      category,
+      rating,
+      reviews,
+      thumbnail,
+      images,
+      stockQuantity,
+    });
+
+    res.json({
+      status: "Success",
+      message: "Product created successfully",
+      data: newProduct,
+    });
+  }
 };
 
 //====>>>> get all the products <<<<====//

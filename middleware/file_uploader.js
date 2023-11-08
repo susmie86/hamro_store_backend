@@ -1,4 +1,4 @@
-// my Multer middleware in file_uploader.js
+// my Multer thumbnail middleware in file_uploader.js
 const multer = require("multer");
 const path = require("path");
 
