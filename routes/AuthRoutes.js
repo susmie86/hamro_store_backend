@@ -18,18 +18,22 @@ router.get(
   errorHandler(tokenValidator.accessTokenValidator),
   errorHandler(Controller.getUser)
 );
-router.delete("/delete/:id", errorHandler(Controller.deleteUser));
-router.put("/update/:id", errorHandler(Controller.updateUser));
+router.delete("/delete/", errorHandler(Controller.deleteUser));
+router.put(
+  "/update/",
+  errorHandler(tokenValidator.accessTokenValidator),
+  errorHandler(Controller.updateUser)
+);
 
 //====>>>> Only For Admin route <<<<====//
-
+// TODO: Might add token validation in log out and left to figure out where to store refresh tokens
 // Generates a new access token.
 router.get(
   "/generateToken",
   errorHandler(tokenValidator.refreshTokenValidator),
   errorHandler(Controller.accessTokenGenerator)
 );
-router.get("/logout", errorHandler(Controller.logoutHandler));
+router.get("/logout",errorHandler(Controller.logoutHandler));
 module.exports = router;
 
 //================================>>>>>>>> Finished Auth Api for now <<<<<<<<<<<<<<<<===========================================//

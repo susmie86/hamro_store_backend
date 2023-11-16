@@ -187,7 +187,7 @@ module.exports.signIn = async (req, res) => {
         //   httpOnly: true,
         //   maxAge: 1 * 24 * 60 * 60 * 1000,
         // });
-        
+
         res.json({
           status: "Success",
           message: "Log in successfull.",
@@ -228,9 +228,9 @@ module.exports.getUser = async (req, res) => {
 
 //====>>>> Delete a user <<<<====//
 module.exports.deleteUser = async (req, res) => {
-  const { id } = req.params;
-  validateMongooseId(id);
-  const deletedUser = await userModel.findByIdAndDelete(id);
+  const { user } = req.body;
+
+  const deletedUser = await userModel.findByIdAndDelete(user._id);
   if (!deletedUser) {
     throw "User doesn't exists.";
   } else {
@@ -244,11 +244,9 @@ module.exports.deleteUser = async (req, res) => {
 
 //====>>>> Update a user <<<<====//
 module.exports.updateUser = async (req, res) => {
-  const { id } = req.params;
+  const { user } = req.body;
 
-  validateMongooseId(id);
-
-  const updatedUser = await userModel.findByIdAndUpdate(id, {
+  const updatedUser = await userModel.findByIdAndUpdate(user._id, {
     firstName: req?.body?.firstName,
     lastName: req?.body?.lastName,
     email: req?.body?.email,
@@ -285,6 +283,13 @@ module.exports.resendOtpCode = async (req, res) => {
 module.exports.accessTokenGenerator = async (req, res) => {
   const userEmail = req.body.email;
   const newAccessToken = await token.createNewAccessToken(userEmail);
+  const updatedUser = await userModel.findOneAndUpdate(
+    { email: userEmail },
+    { $unset: { refreshToken: 1 } }, // Removes the refreshToken field
+    { new: true }
+  );
+
+  if (!updatedUser) throw "User not found";
 
   res.json({
     status: "Success",
