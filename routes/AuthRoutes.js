@@ -18,9 +18,9 @@ router.get(
   errorHandler(tokenValidator.accessTokenValidator),
   errorHandler(Controller.getUser)
 );
-router.delete("/delete/", errorHandler(Controller.deleteUser));
+router.delete("/", errorHandler(Controller.deleteUser));
 router.put(
-  "/update/",
+  "/",
   errorHandler(tokenValidator.accessTokenValidator),
   errorHandler(Controller.updateUser)
 );
@@ -36,8 +36,4 @@ router.get(
 router.get("/logout",errorHandler(Controller.logoutHandler));
 module.exports = router;
 
-//================================>>>>>>>> Finished Auth Api for now <<<<<<<<<<<<<<<<===========================================//
-//================================>>>>>>>> Finished Auth Api for now <<<<<<<<<<<<<<<<===========================================//
-//================================>>>>>>>> Finished Auth Api for now <<<<<<<<<<<<<<<<===========================================//
-//================================>>>>>>>> Finished Auth Api for now <<<<<<<<<<<<<<<<===========================================//
 //================================>>>>>>>> Finished Auth Api for now <<<<<<<<<<<<<<<<===========================================//

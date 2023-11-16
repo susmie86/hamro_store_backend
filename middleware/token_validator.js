@@ -20,9 +20,7 @@ module.exports.accessTokenValidator = async (req, res, next) => {
 
   const user = await userModel.findOne({ email: userEmail });
 
-  if (!user) {
-    throw `User not found with email: ${userEmail}`;
-  }
+  if (!user) throw `User not found with email: ${userEmail}`;
   // Sets the email address of the user.
   req.body.user = user;
   next();
