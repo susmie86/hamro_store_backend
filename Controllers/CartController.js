@@ -146,6 +146,7 @@ module.exports.getCarts = async (req, res) => {
   });
 };
 
+//====>>>> Remove the products from cart <<<<====//
 module.exports.deleteCart = async (req, res) => {
   const { id } = req.params;
   const { user } = req.body;

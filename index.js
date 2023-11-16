@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const authRoute = require("./routes/AuthRoutes.js");
 const productRouter = require("./routes/ProductRoutes.js");
+const wishlistRouter = require("./routes/Wishlist.js");
 const cartRouter = require("./routes/CartRoutes.js");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -12,7 +13,6 @@ const cors = require("cors");
 
 const app = express();
 const port = process.env.PORT || 3000;
-
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 
@@ -30,10 +30,10 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 
 // Custom Middleware
+app.use("/api/auth/", authRoute);
 app.use("/api/carts", cartRouter);
 app.use("/api/products", productRouter);
-app.use("/api/auth/", authRoute);
-
+app.use("/api/wishlists", wishlistRouter);
 // Link variables
 
 const connectionString = process.env.CONNECTION_STRING;
