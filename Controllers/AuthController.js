@@ -178,15 +178,15 @@ module.exports.signIn = async (req, res) => {
           refreshToken: refreshToken,
         });
 
-        // This might be removed in future
-        res.cookie("refreshToken", refreshToken, {
-          httpOnly: true,
-          maxAge: 3 * 24 * 60 * 60 * 1000,
-        });
-        res.cookie("accessToken", accessToken, {
-          httpOnly: true,
-          maxAge: 1 * 24 * 60 * 60 * 1000,
-        });
+        // ? This might be removed in future
+        // res.cookie("refreshToken", refreshToken, {
+        //   httpOnly: true,
+        //   maxAge: 3 * 24 * 60 * 60 * 1000,
+        // });
+        // res.cookie("accessToken", accessToken, {
+        //   httpOnly: true,
+        //   maxAge: 1 * 24 * 60 * 60 * 1000,
+        // });
         
         res.json({
           status: "Success",

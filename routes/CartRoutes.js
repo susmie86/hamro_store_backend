@@ -27,4 +27,11 @@ router.get(
   errorHandler(Controller.getCarts)
 );
 
+router.delete(
+  "/:id",
+  errorHandler(accessTokenValidator),
+  errorHandler(userValidator),
+  errorHandler(Controller.deleteCart)
+);
+
 module.exports = router;

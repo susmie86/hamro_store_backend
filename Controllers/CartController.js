@@ -106,3 +106,28 @@ module.exports.getCarts = async (req, res) => {
     data: productsInCart,
   });
 };
+
+module.exports.deleteCart = async (req, res) => {
+  const { id } = rq.params.id;
+  const { user } = req.body;
+
+  if (!user) throw "User not logged in";
+
+  const userCart = await cartModel.findOne({ userId: user._id });
+
+  if (!userCart) throw "user cart is empty";
+
+  const updatedCart = await cartModel.findOneAndUpdate(
+    { userId: user._id },
+    { $pull: { items: { productId: id } } },
+    { new: true }
+  );
+
+  if (!updatedCart) throw "Cart not found";
+
+  res.json({
+    status: "Success",
+    message: "product removed from cart successfully",
+    data: null,
+  });
+};

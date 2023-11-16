@@ -5,14 +5,18 @@ const userModel = require("../models/users.js");
 module.exports.accessTokenValidator = async (req, res, next) => {
   // Gets the access token from the Authorization header.
   const bearerToken = req.headers["authorization"];
+  console.log("Header: ", req.headers)
   if (
     bearerToken == undefined ||
     bearerToken == "" ||
     bearerToken.trim() == ""
   ) {
+    console.log("Token", bearerToken);
     throw "Access token is required.";
   }
+
   const accessToken = bearerToken.split(" ")[1];
+  console.log("access Token", accessToken);
 
   // Validates an access token.
   const userEmail = await jwtHandler.validateAccessToken(accessToken);
