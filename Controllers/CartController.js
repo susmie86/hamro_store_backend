@@ -1,10 +1,11 @@
 const cartModel = require("../models/Carts");
 const productModel = require("../models/products");
+const { validateMongooseId } = require("../services/validate_mogoose_id");
 
 //====>>>> Add a product to cart <<<<====//
 module.exports.addCart = async (req, res) => {
   const { user, id, quantity } = req.body;
-
+  validateMongooseId(id);
   if (!user) {
     throw "User not logged in";
   }
@@ -12,11 +13,11 @@ module.exports.addCart = async (req, res) => {
   const foundProduct = await productModel.findById(id);
 
   if (!foundProduct) {
-    throw `No product in database with id: ${productId}`;
+    throw `No product in database with id: ${id}`;
   }
   const cartItem = {
     productId: foundProduct._id,
-    quantity: quanity || 1,
+    quantity: quantity || 1,
   };
 
   const existingCart = await cartModel.findOne({ userId: user._id });
@@ -75,11 +76,25 @@ module.exports.addAllToCart = async (req, res) => {
   productIds.map(async (id) => {
     const foundProduct = await productModel.findById(id);
 
-    // TODO: Check if the product is in the product list and add it to cart
-    console.log(`found products: `, foundProduct);
-  });
+    if (!foundProduct) throw `Product with id: ${id} not found`;
 
-  console.log("User cart: ", userCart);
+    const existingCartItems = userCart.items.find(
+      (item) => String(item.productId) === String(id)
+    );
+
+    if (existingCartItems) {
+      existingCartItems.quantity += 1;
+    } else {
+      userCart.items.push({ productId: id, quantity: 1 });
+    }
+  });
+  await userCart.save();
+
+  res.json({
+    status: "Success",
+    message: "All products added to cart successfully",
+    data: userCart,
+  });
 };
 
 //====>>>> get all the products from cart <<<<====//
@@ -108,14 +123,25 @@ module.exports.getCarts = async (req, res) => {
 };
 
 module.exports.deleteCart = async (req, res) => {
-  const { id } = rq.params.id;
+  const { id } = req.params;
   const { user } = req.body;
+
+  validateMongooseId(id);
 
   if (!user) throw "User not logged in";
 
   const userCart = await cartModel.findOne({ userId: user._id });
 
   if (!userCart) throw "user cart is empty";
+
+  const productsInCart = await cartModel.findOne({
+    userId: user._id,
+    "items.productId": id,
+  });
+
+  if (!productsInCart) throw "this product is not in cart";
+
+  console.log("Products in cart:", productsInCart);
 
   const updatedCart = await cartModel.findOneAndUpdate(
     { userId: user._id },
