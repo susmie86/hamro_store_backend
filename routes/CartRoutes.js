@@ -27,6 +27,13 @@ router.get(
   errorHandler(Controller.getCarts)
 );
 
+router.put(
+  "/",
+  errorHandler(accessTokenValidator),
+  errorHandler(userValidator),
+  errorHandler(Controller.updateCart)
+);
+
 router.delete(
   "/:id",
   errorHandler(accessTokenValidator),

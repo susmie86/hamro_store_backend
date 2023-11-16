@@ -97,19 +97,43 @@ module.exports.addAllToCart = async (req, res) => {
   });
 };
 
+//====>>>> Update all the products of cart <<<<====//
+module.exports.updateCart = async (req, res) => {
+  const { user, updatedItems } = req.body;
+
+  // Check if the user has a cart
+  const userCart = await cartModel.findOne({ userId: user._id });
+  if (!userCart) throw "User cart is empty";
+
+  // Loop through all the updated product and change the quantity
+  updatedItems.map(({ productId, quantity }) => {
+    const existingCartItem = userCart.items.find(
+      (item) => String(item.productId) === String(productId)
+    );
+
+    if (existingCartItem) existingCartItem.quantity = quantity;
+  });
+
+  await userCart.save();
+
+  res.json({
+    status: "Success",
+    message: "Cart updated successfully",
+    data: userCart,
+  });
+};
+
 //====>>>> get all the products from cart <<<<====//
 module.exports.getCarts = async (req, res) => {
   const { user } = req.body;
 
-  if (!user) {
-    throw "User not logged in";
-  }
-
+  // FInd the user cart and populate all the products
   const userCart = await cartModel
     .findOne({ userId: user._id })
     .populate("items.productId");
   if (!userCart) throw "Cart is empty";
 
+  // map through each product in user cart and return all the products
   const productsInCart = userCart.items.map((item) => ({
     product: item.productId,
     quantity: item.quantity,
@@ -128,27 +152,23 @@ module.exports.deleteCart = async (req, res) => {
 
   validateMongooseId(id);
 
-  if (!user) throw "User not logged in";
-
+  // check if user has a cart 
   const userCart = await cartModel.findOne({ userId: user._id });
-
   if (!userCart) throw "user cart is empty";
 
+  // Check if there is a product with that productId
   const productsInCart = await cartModel.findOne({
     userId: user._id,
     "items.productId": id,
   });
-
   if (!productsInCart) throw "this product is not in cart";
 
-  console.log("Products in cart:", productsInCart);
-
+  // Remove the product from cart and return the rest of the products
   const updatedCart = await cartModel.findOneAndUpdate(
     { userId: user._id },
     { $pull: { items: { productId: id } } },
     { new: true }
   );
-
   if (!updatedCart) throw "Cart not found";
 
   res.json({
