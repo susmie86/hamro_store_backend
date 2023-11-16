@@ -16,8 +16,6 @@ module.exports.createProduct = async (req, res) => {
   const reviews = req.body?.reviews;
   let errors = [];
 
-  console.log("files", req.files);
-
   const thumbnail = `http://localhost:5000/${req.files[0]?.path}`;
 
   const images = req.files?.map((file) => {

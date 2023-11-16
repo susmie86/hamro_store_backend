@@ -11,6 +11,8 @@ const path = require("path");
 const cors = require("cors");
 
 const app = express();
+const port = process.env.PORT || 3000;
+
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 
@@ -33,7 +35,7 @@ app.use("/api/products", productRouter);
 app.use("/api/auth/", authRoute);
 
 // Link variables
-const port = process.env.PORT || 3000;
+
 const connectionString = process.env.CONNECTION_STRING;
 
 // Connecting to mongoose database

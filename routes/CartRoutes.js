@@ -13,6 +13,13 @@ router.post(
   errorHandler(Controller.addCart)
 );
 
+router.post(
+  "/addAll",
+  errorHandler(accessTokenValidator),
+  errorHandler(userValidator),
+  errorHandler(Controller.addAllToCart)
+);
+
 router.get(
   "/",
   errorHandler(accessTokenValidator),

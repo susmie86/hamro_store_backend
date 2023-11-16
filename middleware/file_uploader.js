@@ -14,7 +14,6 @@ const thumbnailStorage = multer.diskStorage({
   },
 });
 
-
 module.exports.thumbnailUpload = multer({
   storage: thumbnailStorage,
   fileFilter: (req, file, cb) => {

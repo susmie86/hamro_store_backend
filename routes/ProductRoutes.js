@@ -10,7 +10,7 @@ router.post(
   "/",
   errorHandler(tokenValidator.accessTokenValidator),
   errorHandler(tokenValidator.adminValidator),
-  thumbnailUpload.single("thumbnail"),
+  // thumbnailUpload.single("thumbnail"),
   imagesUpload.array("images", 5),
   errorHandler(Controller.createProduct)
 );
