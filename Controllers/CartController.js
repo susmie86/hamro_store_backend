@@ -3,7 +3,7 @@ const productModel = require("../models/products");
 const { validateMongooseId } = require("../services/validate_mogoose_id");
 
 //====>>>> Add a product to cart <<<<====//
-module.exports.addCart = async (req, res) => {
+const addCart = async (req, res) => {
   const { user, id, quantity } = req.body;
   validateMongooseId(id);
   if (!user) {
@@ -64,7 +64,7 @@ module.exports.addCart = async (req, res) => {
 };
 
 //====>>>> Add all the products of wishlist to cart <<<<====//
-module.exports.addAllToCart = async (req, res) => {
+const addAllToCart = async (req, res) => {
   const { productIds, user } = req.body;
 
   if (!user) {
@@ -98,7 +98,7 @@ module.exports.addAllToCart = async (req, res) => {
 };
 
 //====>>>> Update all the products of cart <<<<====//
-module.exports.updateCart = async (req, res) => {
+const updateCart = async (req, res) => {
   const { user, updatedItems } = req.body;
 
   // Check if the user has a cart
@@ -124,7 +124,7 @@ module.exports.updateCart = async (req, res) => {
 };
 
 //====>>>> get all the products from cart <<<<====//
-module.exports.getCarts = async (req, res) => {
+const getCarts = async (req, res) => {
   const { user } = req.body;
 
   // FInd the user cart and populate all the products
@@ -147,13 +147,13 @@ module.exports.getCarts = async (req, res) => {
 };
 
 //====>>>> Remove the products from cart <<<<====//
-module.exports.deleteCart = async (req, res) => {
+const deleteCart = async (req, res) => {
   const { id } = req.params;
   const { user } = req.body;
 
   validateMongooseId(id);
 
-  // check if user has a cart 
+  // check if user has a cart
   const userCart = await cartModel.findOne({ userId: user._id });
   if (!userCart) throw "user cart is empty";
 
@@ -178,3 +178,5 @@ module.exports.deleteCart = async (req, res) => {
     data: null,
   });
 };
+
+module.exports = { addCart, addAllToCart, updateCart, getCarts, deleteCart };

@@ -3,7 +3,7 @@ const productModel = require("../models/products");
 const { validateMongooseId } = require("../services/validate_mogoose_id");
 
 //====>>>> Add a product to wishlist <<<<====//
-module.exports.addWishlist = async (req, res) => {
+const addWishlist = async (req, res) => {
   const { user, productId } = req.body;
 
   validateMongooseId(productId);
@@ -44,7 +44,7 @@ module.exports.addWishlist = async (req, res) => {
 };
 
 //====>>>> get all the products from Wishlist <<<<====//
-module.exports.getWishlists = async (req, res) => {
+const getWishlists = async (req, res) => {
   const { user } = req.body;
 
   // FInd the user wishlist and populate all the products
@@ -66,7 +66,7 @@ module.exports.getWishlists = async (req, res) => {
 };
 
 //====>>>> Remove the products from wishlist <<<<====//
-module.exports.deleteWishlist = async (req, res) => {
+const deleteWishlist = async (req, res) => {
   const { id } = req.params;
   const { user } = req.body;
 
@@ -96,4 +96,10 @@ module.exports.deleteWishlist = async (req, res) => {
     message: "product removed from Wishlist successfully",
     data: null,
   });
+};
+
+module.exports = {
+  addWishlist,
+  getWishlists,
+  deleteWishlist,
 };

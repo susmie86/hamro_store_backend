@@ -2,7 +2,7 @@ const productModel = require("../models/products");
 const { validateMongooseId } = require("../services/validate_mogoose_id");
 
 //====>>>> create the product <<<<====//
-module.exports.createProduct = async (req, res) => {
+const createProduct = async (req, res) => {
   const {
     productName,
     description,
@@ -58,7 +58,7 @@ module.exports.createProduct = async (req, res) => {
 };
 
 //====>>>> get all the products <<<<====//
-module.exports.getProducts = async (req, res) => {
+const getProducts = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 12;
   const skip = (page - 1) * limit;
@@ -74,7 +74,7 @@ module.exports.getProducts = async (req, res) => {
 };
 
 //====>>>> get a single product with some id <<<<====//
-module.exports.getProduct = async (req, res) => {
+const getProduct = async (req, res) => {
   const { id } = req.params;
   validateMongooseId(id);
   const foundProduct = await productModel.findById(id);
@@ -88,7 +88,7 @@ module.exports.getProduct = async (req, res) => {
 };
 
 //====>>>> get a single product with some id and Update that <<<<====//
-module.exports.updateProduct = async (req, res) => {
+const updateProduct = async (req, res) => {
   const { id } = req.params;
   const productData = req.body;
   const images = req.files.map((file) => {
@@ -96,10 +96,14 @@ module.exports.updateProduct = async (req, res) => {
   });
   validateMongooseId(id);
 
-  const updatedProduct = await productModel.findByIdAndUpdate(id, {
-    ...productData,
-    images,
-  });
+  const updatedProduct = await productModel.findByIdAndUpdate(
+    id,
+    {
+      ...productData,
+      images,
+    },
+    { new: true }
+  );
   if (!updatedProduct) {
     throw "Failed to update product.";
   }
@@ -112,7 +116,7 @@ module.exports.updateProduct = async (req, res) => {
 };
 
 //====>>>> get a single product with some id and delete that <<<<====//
-module.exports.deleteProduct = async (req, res) => {
+const deleteProduct = async (req, res) => {
   const { id } = req.params;
   validateMongooseId(id);
 
@@ -125,4 +129,12 @@ module.exports.deleteProduct = async (req, res) => {
     message: "Product deleted Successfully",
     data: null,
   });
+};
+
+module.exports = {
+  createProduct,
+  getProducts,
+  getProduct,
+  updateProduct,
+  deleteProduct,
 };
