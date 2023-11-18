@@ -7,7 +7,7 @@ const jwtHandler = require("../services/jwt_handler.js");
 const { validateMongooseId } = require("../services/validate_mogoose_id.js");
 
 //====>>>> Sign Up <<<<====//
-module.exports.signUpUser = async (req, res) => {
+const signUpUser = async (req, res) => {
   // try {
   // Taking User's data
   const firstName = req.body.firstName;
@@ -97,7 +97,7 @@ module.exports.signUpUser = async (req, res) => {
 };
 
 //====>>>> Verify User <<<<====//
-module.exports.verifyEmail = async (req, res) => {
+const verifyEmail = async (req, res) => {
   // Taking User's Email and OTP
   const email = req.body.email;
   const OTP = req.body.otp;
@@ -119,6 +119,7 @@ module.exports.verifyEmail = async (req, res) => {
       throw "your otp is not match.";
     } else {
       await userModel.findByIdAndUpdate(emailData._id, {
+        otp: "",
         isVerified: true,
       });
     }
@@ -132,7 +133,7 @@ module.exports.verifyEmail = async (req, res) => {
 };
 
 //====>>>> Sign In <<<<====//
-module.exports.signIn = async (req, res) => {
+const signIn = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
@@ -175,7 +176,6 @@ module.exports.signIn = async (req, res) => {
         const refreshToken = token.createNewRefreshToken(emailData.email);
 
         const updatedUser = await userModel.findByIdAndUpdate(emailData._id, {
-          otp: "",
           refreshToken: refreshToken,
         });
 
@@ -203,7 +203,7 @@ module.exports.signIn = async (req, res) => {
 };
 
 //====>>>> Resend OTP code <<<<====//
-module.exports.resendOtpCode = async (req, res) => {
+const resendOtpCode = async (req, res) => {
   const email = req.body.email;
 
   const otp = otpService.otpGenerator();
@@ -219,7 +219,7 @@ module.exports.resendOtpCode = async (req, res) => {
 };
 
 //====>>>> Generate a token using refresh token <<<<====//
-module.exports.accessTokenGenerator = async (req, res) => {
+const accessTokenGenerator = async (req, res) => {
   const userEmail = req.body.email;
   const newAccessToken = await token.createNewAccessToken(userEmail);
   const updatedUser = await userModel.findOneAndUpdate(
@@ -240,7 +240,7 @@ module.exports.accessTokenGenerator = async (req, res) => {
 };
 
 //====>>>> Handle log out <<<<====//
-module.exports.logoutHandler = async (req, res) => {
+const logoutHandler = async (req, res) => {
   const { refreshToken } = req.cookies;
   if (!req.cookies?.refreshToken) {
     throw "No refresh token in cookies.";
@@ -277,4 +277,13 @@ const checkEmailValidity = (email) => {
 
   const isEmailValid = re.test(String(email).toLowerCase());
   return isEmailValid;
+};
+
+module.exports = {
+  signUpUser,
+  verifyEmail,
+  signIn,
+  resendOtpCode,
+  accessTokenGenerator,
+  logoutHandler,
 };

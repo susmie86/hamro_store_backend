@@ -4,7 +4,7 @@ module.exports = (func) => {
       console.log(error);
       if (typeof error === "string") {
         // Handle custom error messages with a 400 status code
-        res.json({ status: "error", message: [error], data: null });
+        res.json({ status: "error", message: error, data: null });
       } else if (error.code === "VALIDATION_ERROR") {
         // Handle validation errors with a 422 status code (Unprocessable Entity)
         res.json({ status: "error", message: error.message, data: null });

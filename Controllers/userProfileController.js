@@ -14,7 +14,6 @@ module.exports.getAllUsers = async (req, res) => {
 //====>>>> Get a user <<<<====//
 module.exports.getUser = async (req, res) => {
   const { user } = req.body;
-
   if (!user) {
     throw "User doesn't exists.";
   } else {
