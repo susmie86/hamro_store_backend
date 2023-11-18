@@ -118,10 +118,14 @@ const verifyEmail = async (req, res) => {
     if (OTP != emailData.otp) {
       throw "your otp is not match.";
     } else {
-      await userModel.findByIdAndUpdate(emailData._id, {
-        otp: "",
-        isVerified: true,
-      });
+      await userModel.findByIdAndUpdate(
+        emailData._id,
+        {
+          otp: "",
+          isVerified: true,
+        },
+        { new: true }
+      );
     }
 
     res.json({

@@ -2,7 +2,7 @@ const userModel = require("../models/users");
 const hashPassword = require("../services/hash_password");
 
 //====>>>> Get all users <<<<====//
-module.exports.getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
   const users = await userModel.find();
   res.json({
     status: "Success",
@@ -12,7 +12,7 @@ module.exports.getAllUsers = async (req, res) => {
 };
 
 //====>>>> Get a user <<<<====//
-module.exports.getUser = async (req, res) => {
+const getUser = async (req, res) => {
   const { user } = req.body;
   if (!user) {
     throw "User doesn't exists.";
@@ -26,7 +26,7 @@ module.exports.getUser = async (req, res) => {
 };
 
 //====>>>> Delete a user <<<<====//
-module.exports.deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
   const { user } = req.body;
 
   const deletedUser = await userModel.findByIdAndDelete(user._id);
@@ -42,14 +42,20 @@ module.exports.deleteUser = async (req, res) => {
 };
 
 //====>>>> Update a user <<<<====//
-module.exports.updateUser = async (req, res) => {
+const updateUser = async (req, res) => {
   const { user } = req.body;
 
-  const updatedUser = await userModel.findByIdAndUpdate(user._id, {
-    firstName: req?.body?.firstName,
-    lastName: req?.body?.lastName,
-    email: req?.body?.email,
-  });
+  const updatedUser = await userModel.findByIdAndUpdate(
+    user._id,
+    {
+      firstName: req?.body?.firstName,
+      lastName: req?.body?.lastName,
+      email: req?.body?.email,
+    },
+    {
+      new: true,
+    }
+  );
 
   if (!updatedUser) {
     throw "User doesn't exists.";
@@ -63,7 +69,7 @@ module.exports.updateUser = async (req, res) => {
 };
 
 //====>>>> Change a user's password <<<<====//
-module.exports.changePassword = async (req, res) => {
+const changePassword = async (req, res) => {
   const { user, oldPassword, newPassword } = req.body;
 
   const userData = await userModel.findById(user._id);
@@ -90,4 +96,12 @@ module.exports.changePassword = async (req, res) => {
     message: "Password changed successfully",
     data: null,
   });
+};
+
+module.exports = {
+  getAllUsers,
+  getUser,
+  deleteUser,
+  updateUser,
+  changePassword,
 };
