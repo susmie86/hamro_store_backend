@@ -175,6 +175,7 @@ module.exports.signIn = async (req, res) => {
         const refreshToken = token.createNewRefreshToken(emailData.email);
 
         const updatedUser = await userModel.findByIdAndUpdate(emailData._id, {
+          otp: "",
           refreshToken: refreshToken,
         });
 
@@ -198,68 +199,6 @@ module.exports.signIn = async (req, res) => {
         });
       }
     }
-  }
-};
-
-//====>>>> Get all users <<<<====//
-module.exports.getAllUsers = async (req, res) => {
-  const users = await userModel.find();
-  res.json({
-    status: "Success",
-    message: "Got all users",
-    data: users,
-  });
-};
-
-//====>>>> Get a user <<<<====//
-module.exports.getUser = async (req, res) => {
-  const { user } = req.body;
-
-  if (!user) {
-    throw "User doesn't exists.";
-  } else {
-    res.json({
-      status: "Success",
-      message: "Got a user successfully",
-      data: user,
-    });
-  }
-};
-
-//====>>>> Delete a user <<<<====//
-module.exports.deleteUser = async (req, res) => {
-  const { user } = req.body;
-
-  const deletedUser = await userModel.findByIdAndDelete(user._id);
-  if (!deletedUser) {
-    throw "User doesn't exists.";
-  } else {
-    res.json({
-      status: "Success",
-      message: "Deleted user Successfully.",
-      data: deletedUser,
-    });
-  }
-};
-
-//====>>>> Update a user <<<<====//
-module.exports.updateUser = async (req, res) => {
-  const { user } = req.body;
-
-  const updatedUser = await userModel.findByIdAndUpdate(user._id, {
-    firstName: req?.body?.firstName,
-    lastName: req?.body?.lastName,
-    email: req?.body?.email,
-  });
-
-  if (!updatedUser) {
-    throw "User doesn't exists.";
-  } else {
-    res.json({
-      status: "Success",
-      message: "Updated user Successfully.",
-      data: updatedUser,
-    });
   }
 };
 

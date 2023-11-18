@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: new Date().toISOString(),
     },
+
     otp: {
       type: String,
       required: true,
@@ -35,14 +36,8 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
-    carts: {
-      type: Array,
-      default: [],
-    },
-
     address: [{ type: mongoose.Schema.Types.ObjectId, ref: "Address" }],
 
-    wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     refreshToken: {
       type: String,
     },
