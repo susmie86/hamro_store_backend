@@ -11,7 +11,7 @@ router.get(
 );
 
 router.get(
-  "/getUser",
+  "/",
   errorHandler(tokenValidator.accessTokenValidator),
   errorHandler(Controller.getUser)
 );
