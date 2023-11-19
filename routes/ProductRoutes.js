@@ -3,14 +3,12 @@ const Controller = require("../Controllers/ProductController");
 const errorHandler = require("../middleware/error_handler.js");
 const tokenValidator = require("../middleware/token_validator.js");
 const { imagesUpload } = require("../middleware/images_uploader");
-const { thumbnailUpload } = require("../middleware/file_uploader");
 
 // Product Creation : Only By admin
 router.post(
   "/",
   errorHandler(tokenValidator.accessTokenValidator),
   errorHandler(tokenValidator.adminValidator),
-  // thumbnailUpload.single("thumbnail"),
   imagesUpload.array("images", 5),
   errorHandler(Controller.createProduct)
 );

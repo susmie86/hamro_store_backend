@@ -2,9 +2,9 @@
 const multer = require("multer");
 const path = require("path");
 
-const thumbnailStorage = multer.diskStorage({
+const iconStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./thumbnails");
+    cb(null, "./categoryIcons");
   },
   filename: (req, file, cb) => {
     cb(
@@ -14,10 +14,10 @@ const thumbnailStorage = multer.diskStorage({
   },
 });
 
-module.exports.thumbnailUpload = multer({
-  storage: thumbnailStorage,
+module.exports.iconUpload = multer({
+  storage: iconStorage,
   fileFilter: (req, file, cb) => {
-    const allowedExtensions = [".jpg", ".jpeg"];
+    const allowedExtensions = [".jpg", ".png", ".jpeg"];
     const fileExtension = path.extname(file.originalname).toLowerCase();
     if (allowedExtensions.includes(fileExtension)) {
       cb(null, true);
