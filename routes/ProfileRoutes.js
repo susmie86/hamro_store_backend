@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const Controller = require("../Controllers/userProfileController");
+const Controller = require("../Controllers/UserProfileController");
 const errorHandler = require("../middleware/error_handler");
 const tokenValidator = require("../middleware/token_validator");
 
