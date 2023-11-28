@@ -8,13 +8,14 @@ router.post(
   "/",
   errorHandler(tokenValidator.accessTokenValidator),
   errorHandler(tokenValidator.adminValidator),
+  iconUpload.single("icon"),
   errorHandler(Controller.addCategory)
 );
 router.patch(
   "/:id",
   errorHandler(tokenValidator.accessTokenValidator),
   errorHandler(tokenValidator.adminValidator),
-  iconUpload.single("icons"),
+  iconUpload.single("icon"),
   errorHandler(Controller.updateCategory)
 );
 router.get(
@@ -28,3 +29,5 @@ router.delete(
   errorHandler(tokenValidator.adminValidator),
   errorHandler(Controller.deleteCategory)
 );
+
+module.exports = router;
