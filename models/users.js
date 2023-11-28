@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    address: [{ type: mongoose.Schema.Types.ObjectId, ref: "address" }],
+    address: [{ type: mongoose.Schema.Types.ObjectId, ref: "Address" }],
 
     refreshToken: {
       type: String,
