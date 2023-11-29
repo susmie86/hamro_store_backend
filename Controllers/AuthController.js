@@ -245,19 +245,10 @@ const accessTokenGenerator = async (req, res) => {
 
 //====>>>> Handle log out <<<<====//
 const logoutHandler = async (req, res) => {
-  const { refreshToken } = req.cookies;
-  if (!req.cookies?.refreshToken) {
-    throw "No refresh token in cookies.";
-  }
-  const foundUser = await userModel.findOne({ refreshToken });
+  // const { refreshToken } = req.cookies;
+  const { user } = req.user;
 
-  if (!foundUser) {
-    res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: true,
-    });
-    res.sendStatus(204);
-  }
+  const foundUser = await userModel.findById(user._id);
 
   await userModel.findOneAndUpdate(
     { refreshToken },
@@ -266,12 +257,11 @@ const logoutHandler = async (req, res) => {
     }
   );
 
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: true,
+  res.json({
+    status: "success",
+    message: "Log out successfully",
+    data: null,
   });
-
-  res.sendStatus(204);
 };
 
 //====>>>> Check Email Validity <<<<====//

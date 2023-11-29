@@ -12,7 +12,11 @@ router.get(
   errorHandler(tokenValidator.refreshTokenValidator),
   errorHandler(Controller.accessTokenGenerator)
 );
-router.get("/logout", errorHandler(Controller.logoutHandler));
+router.get(
+  "/logout",
+  errorHandler(tokenValidator.accessTokenValidator),
+  errorHandler(Controller.logoutHandler)
+);
 
 module.exports = router;
 
