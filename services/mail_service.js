@@ -14,7 +14,7 @@ module.exports.sendOtpMail = async (email,otp) => {
     let info = await transporter.sendMail({
       from: MAIL_SETTINGS.auth.user,
       to: email,
-      subject: 'User registeration OTP for HamroTask application ✔',
+      subject: 'User registeration OTP for Hamro store application ✔',
       html: `
         <div
           class="container"

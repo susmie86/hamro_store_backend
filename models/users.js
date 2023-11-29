@@ -18,10 +18,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    created_date: {
-      type: String,
-      default: new Date().toISOString(),
-    },
 
     otp: {
       type: String,
