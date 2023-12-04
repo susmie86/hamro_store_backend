@@ -32,7 +32,9 @@ module.exports.validateAccessToken = (accessToken) => {
   } catch (err) {
     // Checks if the access token is valid
     if (err.message == "jwt malformed" || err.message == "invalid token") {
-      throw "Please provide a valid access token.";
+      throw (
+        "Please provide a valid access token. Error Message: " + err.message
+      );
     } else if (err.message == "jwt expired") {
       throw "The token is expired.";
     }

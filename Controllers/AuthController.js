@@ -182,17 +182,6 @@ const signIn = async (req, res) => {
         const updatedUser = await userModel.findByIdAndUpdate(emailData._id, {
           refreshToken: refreshToken,
         });
-
-        // ? This might be removed in future
-        // res.cookie("refreshToken", refreshToken, {
-        //   httpOnly: true,
-        //   maxAge: 3 * 24 * 60 * 60 * 1000,
-        // });
-        // res.cookie("accessToken", accessToken, {
-        //   httpOnly: true,
-        //   maxAge: 1 * 24 * 60 * 60 * 1000,
-        // });
-
         res.json({
           status: "Success",
           message: "Log in successfull.",
@@ -246,19 +235,19 @@ const accessTokenGenerator = async (req, res) => {
 //====>>>> Handle log out <<<<====//
 const logoutHandler = async (req, res) => {
   // const { refreshToken } = req.cookies;
-  const { user } = req.user;
+  const { user } = req.body;
 
   const foundUser = await userModel.findById(user._id);
+  if (!foundUser) {
+    console.log("User not found");
+  }
 
-  await userModel.findOneAndUpdate(
-    { refreshToken },
-    {
-      refreshToken: "",
-    }
-  );
+  await userModel.findByIdAndUpdate(user._id, {
+    refreshToken: "",
+  });
 
   res.json({
-    status: "success",
+    status: "Success",
     message: "Log out successfully",
     data: null,
   });

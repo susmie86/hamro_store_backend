@@ -12,7 +12,7 @@ router.get(
   errorHandler(tokenValidator.refreshTokenValidator),
   errorHandler(Controller.accessTokenGenerator)
 );
-router.get(
+router.delete(
   "/logout",
   errorHandler(tokenValidator.accessTokenValidator),
   errorHandler(Controller.logoutHandler)
